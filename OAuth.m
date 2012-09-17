@@ -52,16 +52,6 @@
 	return self;
 }
 
-- (void) dealloc {
-	[oauth_consumer_key release];
-	[oauth_consumer_secret release];
-	[oauth_token release];
-	[oauth_token_secret release];
-
-    [save_prefix release];
-	[super dealloc];
-}
-
 #pragma mark -
 #pragma mark KVC
 
@@ -129,7 +119,6 @@
 																  withUrl:url
 																andParams:_params]
 								 withSecret:[NSString stringWithFormat:@"%@&%@", oauth_consumer_secret, token_secret]];
-	[sigProvider release];
 	
 	// Return the authorization header using the signature and parameters (if any).
 	return [self oauth_authorization_header:oauth_signature withParams:_params];
@@ -223,10 +212,10 @@
  * the header value that you will stick in the "Authorization" header.
  */
 - (NSString *) oauth_authorization_header:(NSString *)oauth_signature withParams:(NSDictionary *)params {
-	NSMutableArray *chunks = [[[NSMutableArray alloc] init] autorelease];
+	NSMutableArray *chunks = [[NSMutableArray alloc] init];
 	
 	// First add all the base components.
-	[chunks addObject:[NSString stringWithString:@"OAuth realm=\"\""]];
+	[chunks addObject:@"OAuth realm=\"\""];
 	for (NSString *part in [self oauth_base_components]) {
 		[chunks addObject:[NSString stringWithFormat:@"%@=\"%@\"", part, [[self valueForKey:part] encodedURLParameterString]]];
 	}
